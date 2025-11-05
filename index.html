@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>그린뷰 (Green View) | 내일의 숲을 위한, 오늘의 지도</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        /* 폰트 및 기본 스타일 설정 */
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #F8F8F8; /* 아주 연한 배경 */
+            color: #333;
+            overflow-x: hidden; /* 가로 스크롤 방지 */
+        }
+        a {
+            text-decoration: none;
+            color: #38761D; /* 진한 녹색 */
+        }
+
+        /* 네비게이션 바 스타일 */
+        header {
+            width: 100%;
+            padding: 15px 0;
+            background-color: #E6F3E6; /* 연한 민트/녹색 배경 */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #38761D;
+        }
+        .nav-links a {
+            margin-left: 25px;
+            font-weight: 500;
+            color: #555;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover {
+            color: #70AD47; /* 호버 시 밝은 녹색 */
+        }
+
+        /* 메인 섹션 스타일 (화면 꽉 채우기) */
+        .section {
+            min-height: 100vh; /* 화면 높이를 꽉 채움 */
+            padding-top: 80px; /* 헤더 높이만큼 여백 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            opacity: 0; /* 초기에는 숨김 (스크롤 애니메이션용) */
+            transform: translateY(20px);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+            padding: 100px 20px;
+        }
+        .section.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 1. 홈 섹션 스타일 */
+        #home {
+            background-color: #E6F3E6;
+            background-image: url('placeholder-leaf-pattern.svg'); /* 실제 이미지 URL로 대체 필요 */
+            background-size: cover;
+        }
+        #home h1 {
+            font-size: 48px;
+            color: #38761D;
+            margin-bottom: 10px;
+        }
+        #home p {
+            font-size: 22px;
+            color: #555;
+            margin-bottom: 40px;
+        }
+        .cta-button {
+            background-color: #70AD47;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-weight: 700;
+            transition: background-color 0.3s;
+        }
+        .cta-button:hover {
+            background-color: #548E3A;
+        }
+
+        /* 2. 소개 섹션 */
+        #about {
+            background-color: white;
+        }
+        #about h2 { color: #38761D; }
+        .about-content {
+            max-width: 800px;
+            line-height: 1.8;
+            font-size: 18px;
+        }
+
+        /* 3. 핵심활동 섹션 */
+        #activity {
+            background-color: #F3FFF3; /* 매우 연한 녹색 */
+        }
+        .activity-map-icon {
+            font-size: 80px;
+            color: #70AD47;
+            margin-bottom: 20px;
+        }
+        #activity h3 {
+            color: #548E3A;
+        }
+
+        /* 4. 캠페인 참여 섹션 */
+        #campaign {
+            background-color: white;
+        }
+        .campaign-card-container {
+            display: flex;
+            gap: 20px;
+            max-width: 1000px;
+            margin-top: 30px;
+        }
+        .campaign-card {
+            flex: 1;
+            padding: 25px;
+            border: 1px solid #E6F3E6;
+            border-radius: 10px;
+            text-align: left;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+        .campaign-card:hover {
+            transform: translateY(-5px);
+        }
+        .campaign-card h4 {
+            color: #38761D;
+            margin-top: 0;
+        }
+
+        /* 5. 뉴스/스토리 섹션 */
+        #news-story {
+            background-color: #F3FFF3;
+        }
+        .story-container {
+            display: flex;
+            gap: 40px;
+            max-width: 1000px;
+        }
+        .story-item {
+            flex: 1;
+            text-align: left;
+        }
+        .story-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        /* 6. 후원/문의 섹션 */
+        #support {
+            background-color: white;
+        }
+        .support-form {
+            max-width: 500px;
+            width: 100%;
+            margin-top: 30px;
+        }
+        .support-form input, .support-form textarea {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .support-form button {
+            width: 100%;
+            background-color: #38761D;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .support-form button:hover {
+            background-color: #548E3A;
+        }
+
+        /* 푸터 스타일 */
+        footer {
+            background-color: #38761D;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+        .footer-copyright {
+            margin-top: 10px;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* 모바일 반응형 (선택사항이지만 트렌디한 디자인에 필수) */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none; /* 모바일에서는 햄버거 메뉴 필요 (JS 추가 필요) */
+            }
+            #home h1 {
+                font-size: 32px;
+            }
+            #home p {
+                font-size: 18px;
+            }
+            .campaign-card-container, .story-container {
+                flex-direction: column;
+            }
+            .section {
+                padding: 60px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav>
+            <div class="logo">
+                <span style="font-size: 28px;">🌳</span> **그린뷰 (Green View)**
+            </div>
+            <div class="nav-links">
+                <a href="#home">홈</a>
+                <a href="#about">소개</a>
+                <a href="#activity">핵심 활동</a>
+                <a href="#campaign">참여</a>
+                <a href="#news-story">스토리</a>
+                <a href="#support">후원/문의</a>
+            </div>
+        </nav>
+    </header>
+
+    <section id="home" class="section">
+        <span style="font-size: 100px; color: #70AD47;">🌿</span>
+        <h1>그린뷰 (Green View)</h1>
+        <p>내일의 숲을 위한, 오늘의 지도. | 청소년 생태 기록 재단</p>
+        <a href="#activity" class="cta-button">활동 참여 시작하기</a>
+    </section>
+
+    <section id="about" class="section">
+        <h2>재단 소개: 녹색 시선으로 세상을 기록하다</h2>
+        <div class="about-content">
+            <p>그린뷰는 **'녹색 시선'**으로 우리 주변의 생태계를 관찰하고 기록하는 청소년 비영리 재단입니다. 평범한 일상 속에서도 생명 다양성의 가치를 발견하고, 우리가 기록한 작은 데이터들이 미래 세대의 환경 보호를 위한 **'오늘의 지도'**가 되도록 노력합니다.</p>
+            <p>우리는 단순히 환경 문제를 고발하는 것을 넘어, **긍정적인 참여와 행동**을 통해 지속 가능한 미래를 만들어 나가는 데 기여합니다.</p>
+        </div>
+    </section>
+
+    <section id="activity" class="section">
+        <h2>핵심 활동: 우리 동네 '생물 다양성 지도' 구축</h2>
+        <div class="activity-map-icon">
+             
+        </div>
+        <p style="max-width: 800px; font-size: 18px;">
+            학교 주변, 동네 공원, 작은 하천 등 익숙한 장소에서 발견한 동식물의 사진과 위치 정보를 **웹앱을 통해 기록**하고 공유합니다. 이 데이터들은 하나의 생물 다양성 지도로 시각화되어, 우리 동네 생태계 변화를 누구나 쉽게 파악하고 모니터링할 수 있는 **'시민 과학 데이터베이스'**가 됩니다.
+        </p>
+        <h3>🌳 참여 방법: <a href="#">지도 앱 바로가기</a></h3>
+    </section>
+
+    <section id="campaign" class="section">
+        <h2>캠페인 참여: 당신의 작은 기록이 세상을 바꿉니다</h2>
+        <div class="campaign-card-container">
+            <div class="campaign-card">
+                <h4>1. 월간 생물 챌린지</h4>
+                <p>매월 지정된 특정 생물종(예: 제비, 나비, 특정 야생화)을 찾고 기록하여, 해당 종의 생태 분포 변화를 집중적으로 추적합니다. (기록 시 인증 배지 증정!)</p>
+            </div>
+            <div class="campaign-card">
+                <h4>2. 에코 스쿨 프로젝트</h4>
+                <p>학교 단위로 팀을 구성하여 교내 생태 지도를 완성하는 프로젝트입니다. 우수 팀에게는 재단 명의의 환경 봉사 인증서와 시상이 제공됩니다.</p>
+            </div>
+            <div class="campaign-card">
+                <h4>3. 그린 서포터즈</h4>
+                <p>재단의 홍보 콘텐츠를 제작하거나, 오프라인 캠페인을 기획 및 운영하는 서포터즈 활동에 참여하여 재단의 '녹색 시선'을 함께 확장합니다.</p>
+            </div>
+        </div>
+        <a href="#" style="margin-top: 30px;">모든 캠페인 보러가기 →</a>
+    </section>
+
+    <section id="news-story" class="section">
+        <h2>뉴스 & 스토리: 현장의 생생한 이야기</h2>
+        <div class="story-container">
+            <div class="story-item">
+                 
+                <h4 style="color: #548E3A;">[생태 기록] 우리 동네 하천, 멸종 위기종 발견 보고!</h4>
+                <p>2025.10.25 | 김그린 학생</p>
+                <p>그린뷰 지도를 통해 멸종 위기종인 수달의 서식 흔적을 기록한 이야기와 전문가 인터뷰.</p>
+            </div>
+            <div class="story-item">
+                 
+                <h4 style="color: #548E3A;">[캠페인 후기] 에코 스쿨 프로젝트, 10개 학교 참여</h4>
+                <p>2025.10.20 | 재단 운영팀</p>
+                <p>성황리에 마무리된 교내 생태 지도 제작 프로젝트의 우수 사례와 참여 학생들의 소감.</p>
+            </div>
+        </div>
+        <a href="#" style="margin-top: 30px;">더 많은 이야기 보기 →</a>
+    </section>
+
+    <section id="support" class="section">
+        <h2>후원 및 문의</h2>
+        <p>여러분의 작은 관심과 후원이 청소년들의 지속 가능한 생태 활동을 이어갈 수 있는 큰 힘이 됩니다.</p>
+        <div class="support-form">
+            <input type="text" placeholder="성함/단체명" required>
+            <input type="email" placeholder="이메일 주소" required>
+            <input type="text" placeholder="문의/후원 희망 내용" required>
+            <textarea placeholder="자세한 내용을 남겨주세요." rows="4"></textarea>
+            <button type="submit">문의/후원하기</button>
+        </div>
+        <p style="margin-top: 30px; font-size: 16px;">후원 계좌 정보: **농협 302-XXXX-XXXX-XX (그린뷰 재단)**</p>
+    </section>
+
+    <footer>
+        <p>그린뷰 (Green View) | 내일의 숲을 위한, 오늘의 지도.</p>
+        <p>대표 연락처: contact@greenview.org | 주소: (가상의 주소)</p>
+        <div class="footer-copyright">
+            © 2025 Green View Foundation. All Rights Reserved. **이 홈페이지의 지적 소유권은 재단에 있다.**
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        // 한번 나타난 후에는 관찰을 중지하여 성능 최적화
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            }, {
+                rootMargin: '0px',
+                threshold: 0.2 // 섹션이 20% 보였을 때 활성화
+            });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+
+</body>
+</html>
